@@ -15,6 +15,16 @@ import os
 
 import pandas as pd
 
+
+def ansToBool(answer):
+    if(answer == "Y" or answer == "y"):
+        return True
+
+    else:
+        return False
+
+
+
 #Ask the user to enter in a CSV filename
 filename = input("Enter a filename: ")
 
@@ -29,7 +39,51 @@ while not os.path.exists('./' + filename):
 df = pd.read_csv(filename)
 print(df)
 
+
+groupInput = " "
+while(1):
+    groupInput = input("How would you like to have your groups created?\nBy number of students per group[N]?\nOr\nBy how many groups will be made[G]\n")
+    if(groupInput == "G" or groupInput == "N"):
+        break
+
+if(groupInput == "N"):
+    numStud = input("How many students per group?")
+
+if(groupInput == "G"):
+    numGroup = input("How many groups will be made?")
+
+#Menu:
+
+#random bool
+randBool = ansToBool(input("Would you like the groups to be completely randomized? [Y/N]"))
+print(randBool)
+
+#if the user wants options
+if(not randBool):
+    #blacklist bool
+    blackBool = ansToBool(input("Would you like to use the blacklist? [Y/N]"))
+
+    #gender bool
+    genBool = ansToBool(input("Would you like to create groups based on gender? [Y/N]"))
+
+    #preferred bool
+    prefBool = ansToBool(input("Would you like to include student group preferences? [Y/N]"))
+
+    #personality bool
+    persBool = ansToBool(input("Would you like to create groups based on personality? [Y/N]"))
+
+
 #Write to the CSV
-file = open('GroupMakerOutput.csv', "w")
-#df.to_csv(index=False)
+df.to_csv('GroupMakerOutput.csv')
 print("Successfully wrote to output file!")
+
+
+
+
+
+
+
+
+
+
+
