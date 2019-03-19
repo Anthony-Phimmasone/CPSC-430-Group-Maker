@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 """
 Created on Sun Mar 10 09:26:05 2019
-
 @author: phimm_000
 """
 
 import os
+from sklearn.utils import shuffle
+import numpy as np
 
 #Group Maker
 #Anthony Phimmasone
@@ -39,7 +40,27 @@ while not os.path.exists('./' + filename):
 df = pd.read_csv(filename)
 print(df)
 
+#Get all the information in the column based on the Header name
+nameList = list(df['Name'])
+preferredList = list(df['Preferred List'])
+blackList = list(df['Blacklist'])
+personalityList = list(df['Personality Type'])
+genderList = list(df['Gender'])
+skillsList = list(df['Programming Skills'])
 
+#Creates lists for each row and puts it into a list (AKA lists of lists)
+listOflists = df.values.tolist()
+
+#Randomize the list
+shuffleNames = shuffle(nameList)
+shuffleLists = shuffle(listOflists)
+print(shuffleNames)
+print("\n\n\n")
+print(listOflists)
+print("\n\n\n")
+
+numStud = " "
+numGroup = " "
 groupInput = " "
 while(1):
     groupInput = input("How would you like to have your groups created?\nBy number of students per group[N]?\nOr\nBy how many groups will be made[G]\n")
@@ -76,14 +97,3 @@ if(not randBool):
 #Write to the CSV
 df.to_csv('GroupMakerOutput.csv')
 print("Successfully wrote to output file!")
-
-
-
-
-
-
-
-
-
-
-
