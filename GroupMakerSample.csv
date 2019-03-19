@@ -1,1 +1,11 @@
-Column 1,Column 2,Column 3,Column 4,Column 50,0,0,0,00,0,0,0,00,0,0,0,00,0,0,0,00,0,0,0,00,0,0,0,00,0,0,0,00,0,0,0,00,0,0,0,00,0,0,0,0
+Name,Preferred List,Blacklist,Personality Type,Gender,Programming Skills
+PersonA,PersonB,,Blue,M,1
+PersonB,,PersonC,Gold,F,2
+PersonC,,PersonA,Green,M,3
+PersonD,PersonC,,Orange,F,4
+PersonE,,PersonF,Blue,M,5
+PersonF,,PersonE,Gold,F,5
+PersonG,PersonF,,Green,M,4
+PersonH,,,Orange,F,3
+PersonI,,,Blue,M,2
+PersonJ,PersonI,,Gold,F,1
