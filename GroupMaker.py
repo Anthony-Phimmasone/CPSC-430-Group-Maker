@@ -5,7 +5,7 @@ Created on Sun Mar 10 09:26:05 2019
 """
 
 import os
-from sklearn.utils import shuffle
+import random
 import numpy as np
 
 #Group Maker
@@ -16,15 +16,12 @@ import numpy as np
 
 import pandas as pd
 
-
 def ansToBool(answer):
     if(answer == "Y" or answer == "y"):
         return True
 
     else:
         return False
-
-
 
 #Ask the user to enter in a CSV filename
 filename = input("Enter a filename: ")
@@ -52,9 +49,9 @@ skillsList = list(df['Programming Skills'])
 listOflists = df.values.tolist()
 
 #Randomize the list
-shuffleNames = shuffle(nameList)
-shuffleLists = shuffle(listOflists)
-print(shuffleNames)
+random.shuffle(nameList)
+random.shuffle(listOflists)
+print(nameList)
 print("\n\n\n")
 print(listOflists)
 print("\n\n\n")
@@ -67,9 +64,17 @@ while(1):
     if(groupInput == "G" or groupInput == "N"):
         break
 
+result = []
+result.append([])
 if(groupInput == "N"):
     numStud = input("How many students per group?")
-
+    i = -1
+    for j in range(len(nameList)):
+        if j % int(numStud) == 0:
+            result.append([])
+            i = i + 1
+        result[i].append(nameList[j])
+'''
 if(groupInput == "G"):
     numGroup = input("How many groups will be made?")
 
@@ -92,8 +97,10 @@ if(not randBool):
 
     #personality bool
     persBool = ansToBool(input("Would you like to create groups based on personality? [Y/N]"))
+'''
 
-
+df = pd.DataFrame.from_records(result)
+print(df)
 #Write to the CSV
 df.to_csv('GroupMakerOutput.csv')
 print("Successfully wrote to output file!")
