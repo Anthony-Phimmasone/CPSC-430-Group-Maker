@@ -24,14 +24,14 @@ def ansToBool(answer):
         return False
 
 #Ask the user to enter in a CSV filename
-filename = input("Enter a filename: ")
+filename = input("Enter a filename (include the .csv): ")
 
 #While the file does not exist
 #Ask the user to re-enter filename
 #The path of the file
 while not os.path.exists('./' + filename):
     print("File does not exist or incorrect spelling")
-    filename = input("Enter a filename: ")
+    filename = input("Enter a filename (include the .csv): ")
 
 #Print the CSV file
 df = pd.read_csv(filename)
@@ -74,27 +74,28 @@ if(groupInput == "N"):
             result.append([])
             i = i + 1
         result[i].append(nameList[j])
-'''
+
 if(groupInput == "G"):
     numGroup = input("How many groups will be made?")
-
+    m = -1
+    for n in range(len(nameList)):
+        if n % int(numGroup) == 0:
+            result.append([])
+            m = m + 1
+        result[m].append(nameList[n])
+'''
 #Menu:
-
 #random bool
 randBool = ansToBool(input("Would you like the groups to be completely randomized? [Y/N]"))
 print(randBool)
-
 #if the user wants options
 if(not randBool):
     #blacklist bool
     blackBool = ansToBool(input("Would you like to use the blacklist? [Y/N]"))
-
     #gender bool
     genBool = ansToBool(input("Would you like to create groups based on gender? [Y/N]"))
-
     #preferred bool
     prefBool = ansToBool(input("Would you like to include student group preferences? [Y/N]"))
-
     #personality bool
     persBool = ansToBool(input("Would you like to create groups based on personality? [Y/N]"))
 '''
