@@ -4,15 +4,15 @@ Created on Sun Mar 10 09:26:05 2019
 @author: phimm_000
 """
 
-import os
-import random
-
 #Group Maker
 #Anthony Phimmasone
 #Denzel Saraka
 #Igor Asipenka
 #James Donahue
 
+import os
+import random
+import math
 import csv
 
 def ansToBool(answer):
@@ -83,7 +83,7 @@ if(groupInput == "N"):
 
 if(groupInput == "G"):
     numGroup = input("How many groups will be made?")
-    perGroup = int(len(nameList) / int(numGroup))
+    perGroup = math.ceil(len(nameList) / int(numGroup))
     i = -1
     for j in range(len(nameList)):
         if j % int(perGroup) == 0:
