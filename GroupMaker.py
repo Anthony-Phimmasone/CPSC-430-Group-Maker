@@ -6,7 +6,6 @@ Created on Sun Mar 10 09:26:05 2019
 
 import os
 import random
-import numpy as np
 
 #Group Maker
 #Anthony Phimmasone
@@ -14,7 +13,7 @@ import numpy as np
 #Igor Asipenka
 #James Donahue
 
-import pandas as pd
+import csv
 
 def ansToBool(answer):
     if(answer == "Y" or answer == "y"):
@@ -33,10 +32,17 @@ while not os.path.exists('./' + filename):
     print("File does not exist or incorrect spelling")
     filename = input("Enter a filename (include the .csv): ")
 
-#Print the CSV file
-df = pd.read_csv(filename)
-print(df)
+students = []
+with open(filename, mode='r') as csv_file:
+    csv_reader = csv.DictReader(csv_file)
+    for row in csv_reader:
+        students.append(row)
 
+nameList = []
+for row in students:
+    nameList.append(row['Name'])
+
+'''
 #Get all the information in the column based on the Header name
 nameList = list(df['Name'])
 preferredList = list(df['Preferred List'])
@@ -44,17 +50,18 @@ blackList = list(df['Blacklist'])
 personalityList = list(df['Personality Type'])
 genderList = list(df['Gender'])
 skillsList = list(df['Programming Skills'])
+'''
 
 #Creates lists for each row and puts it into a list (AKA lists of lists)
-listOflists = df.values.tolist()
+#listOflists = df.values.tolist()
 
 #Randomize the list
 random.shuffle(nameList)
-random.shuffle(listOflists)
+#random.shuffle(listOflists)
 print(nameList)
 print("\n\n\n")
-print(listOflists)
-print("\n\n\n")
+#print(listOflists)
+#print("\n\n\n")
 
 numStud = " "
 numGroup = " "
@@ -65,7 +72,6 @@ while(1):
         break
 
 result = []
-result.append([])
 if(groupInput == "N"):
     numStud = input("How many students per group?")
     i = -1
@@ -77,12 +83,13 @@ if(groupInput == "N"):
 
 if(groupInput == "G"):
     numGroup = input("How many groups will be made?")
-    m = -1
-    for n in range(len(nameList)):
-        if n % int(numGroup) == 0:
+    perGroup = int(len(nameList) / int(numGroup))
+    i = -1
+    for j in range(len(nameList)):
+        if j % int(perGroup) == 0:
             result.append([])
-            m = m + 1
-        result[m].append(nameList[n])
+            i = i + 1
+        result[i].append(nameList[j])
 '''
 #Menu:
 #random bool
@@ -100,8 +107,13 @@ if(not randBool):
     persBool = ansToBool(input("Would you like to create groups based on personality? [Y/N]"))
 '''
 
-df = pd.DataFrame.from_records(result)
-print(df)
+#df = pd.DataFrame.from_records(result)
+#print(df)
 #Write to the CSV
-df.to_csv('GroupMakerOutput.csv')
+#df.to_csv('GroupMakerOutput.csv')
+
+with open('GroupMakerOutput.csv', mode='w') as output_file:
+    csv_writer = csv.writer(output_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+    for row in result:
+        csv_writer.writerow(row)
 print("Successfully wrote to output file!")
