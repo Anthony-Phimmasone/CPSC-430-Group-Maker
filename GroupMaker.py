@@ -74,22 +74,34 @@ while(1):
 result = []
 if(groupInput == "N"):
     numStud = input("How many students per group?")
+    remainder = len(nameList) % int(numStud)
+    if not remainder == 0:
+        print("Groups may have extra students")
     i = -1
-    for j in range(len(nameList)):
+    for j in range(len(nameList) - remainder):
         if j % int(numStud) == 0:
             result.append([])
             i = i + 1
         result[i].append(nameList[j])
+    leftOver = nameList[len(nameList) - remainder:]
+    for i in range(len(leftOver)):
+        result[i].append(leftOver[i])
 
 if(groupInput == "G"):
     numGroup = input("How many groups will be made?")
-    perGroup = math.ceil(len(nameList) / int(numGroup))
+    perGroup = math.floor(len(nameList) / int(numGroup))
+    remainder = len(nameList) % int(perGroup)
+    if not remainder == 0:
+        print("Groups may have extra students")
     i = -1
-    for j in range(len(nameList)):
+    for j in range(len(nameList) - remainder):
         if j % int(perGroup) == 0:
             result.append([])
             i = i + 1
         result[i].append(nameList[j])
+    leftOver = nameList[len(nameList) - remainder:]
+    for i in range(len(leftOver)):
+        result[i].append(leftOver[i])
 '''
 #Menu:
 #random bool
