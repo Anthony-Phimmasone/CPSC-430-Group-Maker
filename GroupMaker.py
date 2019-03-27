@@ -85,8 +85,8 @@ if not remainder == 0:
 i = -1
 for j in range(len(nameList) - remainder):
     if j % int(numStud) == 0:
-        result.append([])
         i = i + 1
+        result.append([i])
     result[i].append(nameList[j])
 leftOver = nameList[len(nameList) - remainder:]
 for i in range(len(leftOver)):
@@ -112,6 +112,14 @@ if(not randBool):
 #print(df)
 #Write to the CSV
 #df.to_csv('GroupMakerOutput.csv')
+
+for i in range(len(result)):
+    print("Group", i, ": ", end = "", sep = "")
+    for j in range(1, len(result[i])):
+        if (not j == len(result[i]) - 1):
+            print(result[i][j], ", ", sep = "", end="")
+        else:
+            print(result[i][j])
 
 with open('GroupMakerOutput.csv', mode='w') as output_file:
     csv_writer = csv.writer(output_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
