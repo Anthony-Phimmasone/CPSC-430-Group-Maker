@@ -37,7 +37,7 @@ while not os.path.exists('./' + filename):
 #total csv file
 totalDF = pd.read_csv(filename)
 
-#print(totalDF)
+print(totalDF)
 '''
 students = []
 with open(filename, mode='r') as csv_file:
