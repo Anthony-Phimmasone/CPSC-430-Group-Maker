@@ -24,6 +24,8 @@ def ansToBool(answer):
     else:
         return False
 
+randBool = False
+
 #Ask the user to enter in a CSV filename
 #filename = input("Enter a filename (include the .csv): ")
 #User can enter in a filename with or without the .csv
@@ -89,9 +91,9 @@ categoryThree = headers[4]
 print("\n\n\n")
 
 
-#TODO: Check if the number of students in each group is maximum (exceeds number in CSV file)
+#TODO:
 #Or if the user only wants one group then ignore options and export random list
-#Check if user types zero groups
+#how to fix, xet randBool to True; if (randbool): dont ask for randool input
 
 numStud = " "
 numGroup = " "
@@ -116,16 +118,10 @@ if(groupInput == "N" or groupInput == "n"):
             print("Invalid Input!")
         else:
             numStud = int(numStud)
+            if len(nameList) == int(numStud):
+                randBool = True
             break
     
-#if number of groups is zero print invalid
-#State prompt
-
-#TODO: If input number of students per group dived total students is less than 1
-#Then invalid input
-
-#TODO: If number of groups is more than students invalid.
-
 if(groupInput == "G" or groupInput == "g"):
     while True:
         numGroup = input("How many groups will be made?")
@@ -135,16 +131,18 @@ if(groupInput == "G" or groupInput == "g"):
         else:
             numGroup = int(numGroup)
             numStud = int(math.floor(len(nameList) / numGroup))
+            if numGroup == 1:
+                randbool = True
             break
 
 
 #Menu:
     
-#TODO: Make sure an option is inputed, probably use a while loop 
-    
 blackBool = False
 #random bool
-randBool = ansToBool(input("Would you like the groups to be completely randomized? [Y/N]: "))
+if not randBool:
+    randBool = ansToBool(input("Would you like the groups to be completely randomized? [Y/N]: "))
+#TODO: Make sure if 8 groups and 10 students makes 8 groups instead of 10
 
 if(randBool):
     #creating totally randomized groups
@@ -260,10 +258,11 @@ for i in range(len(result)):
             print(result[i][j], ", ", sep = "", end="")
         else:
             print(result[i][j])
-timestamp = datetime.datetime.now().strftime("%B-%d-%Y-%I:%M")
+timestamp = datetime.datetime.now().strftime("%m-%d-(%I-%M)")
 outputFile = "GroupMakerOutput"+timestamp+".csv"
+
 with open(outputFile, mode='w') as output_file:
     csv_writer = csv.writer(output_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
     for row in result:
         csv_writer.writerow(row)
-print("Successfully wrote to output file!")
+print("Successfully wrote to: ",outputFile)
