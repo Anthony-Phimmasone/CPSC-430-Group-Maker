@@ -1,11 +1,11 @@
-Name,Preferred List,Blacklist,Personality Type,Gender,Programming Skills
-PersonA,PersonB,,Blue,M,1
-PersonB,,PersonC,Gold,F,2
-PersonC,,PersonC,Green,M,3
-PersonD,PersonC,,Orange,F,4
-PersonE,,PersonC,Blue,M,5
-PersonF,,PersonC,Gold,F,5
-PersonG,PersonF,PersonC,Green,M,4
-PersonH,,PersonC,Orange,F,3
-PersonI,,PersonC,Blue,M,2
-PersonJ,PersonI,,Gold,F,1
+Name,Blacklist,Personality Type,Gender,Programming Skills
+PersonA,,Blue,M,1
+PersonB,PersonC,Gold,F,2
+PersonC,PersonA,Green,M,3
+PersonD,,Orange,F,4
+PersonE,PersonF,Blue,M,5
+PersonF,PersonE,Gold,F,5
+PersonG,,Green,M,4
+PersonH,,Orange,F,3
+PersonI,,Blue,M,2
+PersonJ,,Gold,F,1
