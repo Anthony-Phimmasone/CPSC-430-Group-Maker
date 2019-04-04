@@ -120,6 +120,7 @@ if(groupInput == "N" or groupInput == "n"):
             numStud = int(numStud)
             if len(nameList) == int(numStud):
                 randBool = True
+                #print(randbool)
             break
     
 if(groupInput == "G" or groupInput == "g"):
@@ -131,8 +132,9 @@ if(groupInput == "G" or groupInput == "g"):
         else:
             numGroup = int(numGroup)
             numStud = int(math.floor(len(nameList) / numGroup))
-            if numGroup == 1:
-                randbool = True
+            if int(numGroup) == 1:
+                randBool = True
+                #print(randBool)
             break
 
 
