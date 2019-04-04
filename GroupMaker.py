@@ -27,13 +27,17 @@ def ansToBool(answer):
 #Ask the user to enter in a CSV filename
 #filename = input("Enter a filename (include the .csv): ")
 #User can enter in a filename with or without the .csv
-print("Enter in a filename with or with the .csv")
+print("Enter in a filename with the .csv")
 filename = input("Enter a filename: ")
 #If a filename is not shorter than 5 character and does not end with .csv
 #Then concatenate the .csv to the end of the filename
-if len(filename) < 5 or not filename.strip().endswith(".csv"):
-    filename = filename + ".csv"
-print(filename)
+while True:
+    if not filename.strip().endswith(".csv"):
+        print("Please enter a proper CSV filename with the .csv extension!")
+        filename = input("Enter a filename: ")
+    else:
+        break
+#print(filename)
 
 #While the file does not exist
 #Ask the user to re-enter filename
@@ -94,17 +98,21 @@ numGroup = " "
 groupInput = " "
 while(1):
     groupInput = input("How would you like to have your groups created?\nBy number of students per group[N]?:\nOr\nBy how many groups will be made[G]:\n")
-    if(groupInput == "G" or groupInput == "N"):
+    if(groupInput == "G" or groupInput == "g" or groupInput == "N" or groupInput == "n"):
         break
 
 #Check if students in group is excedes maximum
 
-if(groupInput == "N"):
+if(groupInput == "N" or groupInput == "n"):
     while True:
-        numStud = input("How many students per group?")
+        numStud = input("How many minimum students per group?")
         #If the input entered is not a number or is longer than the amount of students
         #Then it is invalid
-        if not numStud.isdigit() or int(numStud) > len(nameList):
+        tempMod = len(nameList) % int(numStud)
+        if not tempMod == 0:
+            if tempMod < int(numStud):
+                print("Invalid Input!")
+        elif not numStud.isdigit() or int(numStud) > len(nameList) or int(numStud) == 0:
             print("Invalid Input!")
         else:
             numStud = int(numStud)
@@ -113,11 +121,16 @@ if(groupInput == "N"):
 #if number of groups is zero print invalid
 #State prompt
 
-if(groupInput == "G"):
+#TODO: If input number of students per group dived total students is less than 1
+#Then invalid input
+
+#TODO: If number of groups is more than students invalid.
+
+if(groupInput == "G" or groupInput == "g"):
     while True:
         numGroup = input("How many groups will be made?")
         #numStud = int(math.floor(len(nameList) / int(numGroup)))
-        if not numGroup.isdigit() or int(numGroup) == 0:
+        if not numGroup.isdigit() or int(numGroup) == 0 or int(numGroup) > len(nameList):
             print("Invalid Input!")
         else:
             numGroup = int(numGroup)
@@ -126,6 +139,9 @@ if(groupInput == "G"):
 
 
 #Menu:
+    
+#TODO: Make sure an option is inputed, probably use a while loop 
+    
 blackBool = False
 #random bool
 randBool = ansToBool(input("Would you like the groups to be completely randomized? [Y/N]: "))
