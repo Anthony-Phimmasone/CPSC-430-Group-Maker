@@ -16,7 +16,65 @@ import math
 import csv
 import datetime
 import pandas as pd
+def blacklist(nameList, numStud, randStudents):
+    result = []
+    remainder = len(nameList) % int(numStud)
+    if not remainder == 0:
+        print("Groups may have extra students")
 
+    i = -1
+    for j in range(len(nameList) - remainder):
+        if j % int(numStud) == 0:
+            i = i + 1
+            result.append([])
+        result[i].append(nameList[j])
+
+    leftOver = nameList[len(nameList) - remainder:]
+    for i in range(len(leftOver)):
+        result[i].append(leftOver[i])
+
+    readyBool = False
+    #print("Result: ",result)
+    while(not readyBool):
+        #check that students are not in a group with their blacklistee
+        for groupnum in range(len(result)):
+            group = result[groupnum]
+            for studentnum in range(len(group)):
+                student = group[studentnum]
+                index = randStudents[randStudents['Name']==student].index.values.astype(int)[0]
+                #print(index)
+                blackValue = randStudents.at[index,"Blacklist"]
+                #print(student ," does not want to pair with: ",blackValue)
+                if(str(blackValue) == 'nan'):
+                    continue
+                else:
+                    #check if blacklistee in students group
+                    if blackValue in group:
+                        nextGroup = groupnum +1
+                        #check if last group
+                        if(groupnum == len(result)-1):
+                            nextGroup = 0
+                        #move student to next group
+                        result[nextGroup].append(student)
+                        #print("moved: ",student," to ",nextGroup)
+                        del group[studentnum]
+                        #move nextGroups first student to this gorup
+                        result[groupnum].append(result[nextGroup][0])
+                        #print("removed: ",result[nextGroup][0])
+                        del result[nextGroup][0]
+                        #print("Result: ",result)
+
+        #check if groups are complete
+        for groupnum in range(len(result)):
+            group = result[groupnum]
+            for student in group:
+                index = randStudents[randStudents['Name']==student].index.values.astype(int)[0]
+                blackValue = randStudents.at[index,"Blacklist"]
+                if str(blackValue) not in group:
+                    if(groupnum == len(result) -1):
+                        readyBool = True
+                        break
+    return result
 def ansToBool(answer):
     if(answer == "Y" or answer == "y"):
         return True
@@ -75,7 +133,7 @@ randStudents= totalDF.sample(frac=1)
 nameList = randStudents['Name'].values
 
 #TODO: Check if file has extra headers
-                       
+
 #Get all the information in the column based on the Header name
 #for i in range(3, len (headers))
 categoryOne = headers[2]
@@ -110,19 +168,25 @@ if(groupInput == "N" or groupInput == "n"):
         numStud = input("How many minimum students per group?")
         #If the input entered is not a number or is longer than the amount of students
         #Then it is invalid
-        tempMod = len(nameList) % int(numStud)
+        '''
+       # tempMod = len(nameList) % int(numStud)
         if not tempMod == 0:
             if tempMod < int(numStud):
+                # int(numStud)/2
                 print("Invalid Input!")
-        elif not numStud.isdigit() or int(numStud) > len(nameList) or int(numStud) == 0:
+'''
+        if not numStud.isdigit() or int(numStud) > len(nameList) or int(numStud) == 0:
             print("Invalid Input!")
-        else:
-            numStud = int(numStud)
-            if len(nameList) == int(numStud):
-                randBool = True
-                #print(randbool)
+        elif len(nameList) == int(numStud):
+            randBool = True
             break
-    
+        elif int(numStud)*2 > len(nameList):
+            print("Minimum Students in groups too large, please try a lower number")
+
+        else:
+            break
+
+
 if(groupInput == "G" or groupInput == "g"):
     while True:
         numGroup = input("How many groups will be made?")
@@ -139,7 +203,7 @@ if(groupInput == "G" or groupInput == "g"):
 
 
 #Menu:
-    
+
 blackBool = False
 #random bool
 if not randBool:
@@ -171,6 +235,9 @@ if(not randBool):
 
 #user selected blacklist option
 if(blackBool):
+    result=[]
+    result=blacklist(nameList,numStud,randStudents)
+'''
     #creating groups based on blacklist
     result = []
     remainder = len(nameList) % int(numStud)
@@ -218,7 +285,7 @@ if(blackBool):
                         #print("removed: ",result[nextGroup][0])
                         del result[nextGroup][0]
                         #print("Result: ",result)
-                        
+
         #check if groups are complete
         for groupnum in range(len(result)):
             group = result[groupnum]
@@ -227,12 +294,12 @@ if(blackBool):
                 blackValue = randStudents.at[index,"Blacklist"]
                 if str(blackValue) not in group:
                     if(groupnum == len(result) -1):
-                            readyBool = True
-                            break
-
+                        readyBool = True
+                        break
+'''
     #add numbers to beginning of groups
-    for i in range(len(result)):    
-        result[i].insert(0,i)
+   # for i in range(len(result)):    
+    #    result[i].insert(0,i)
 #print("Result: ",result)
 
 categoryOneBool = False
