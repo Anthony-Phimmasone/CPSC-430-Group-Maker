@@ -74,9 +74,201 @@ def blacklist(nameList, numStud, randStudents):
                     if(groupnum == len(result) -1):
                         readyBool = True
                         break
+     #add numbers to beginning of groups
+    for i in range(len(result)):
+        result[i].insert(0,i)
+
     return result
+
+
+def customChoiceSame(nameList, numStud, randStudents,category):
+    result = []
+    remainder = len(nameList) % int(numStud)
+    if not remainder == 0:
+        print("Groups may have extra students")
+
+    i = 0
+    groupValue=''
+
+    totalGroups=(len(nameList)-remainder)/int(numStud)
+    catList=randStudents[category].tolist()
+    uniqueCat=[]
+    for x in catList:
+        if x not in uniqueCat:
+            uniqueCat.append(x)
+    
+
+    for x in range(int(totalGroups)):
+        result.append([])
+        result[x].append(uniqueCat[x])
+    for j in range(0,len(nameList)-remainder):
+        student = nameList[j]
+        index = randStudents[randStudents['Name']==student].index.values.astype(int)[0]
+            #print(index)
+        groupValue = randStudents.at[index,category]
+        print(student, " value is : ",groupValue)
+        for k in range(int(totalGroups)):
+
+            if len(result[k])==int(numStud)+1:
+                continue
+            elif groupValue in result[k]:
+                print(student," placed in group ",str(k))
+                result[k].append(student)
+                break
+            elif k==totalGroups-1:
+                rand=random.randint(0,totalGroups-1)
+
+                while len(result[rand]) == int(numStud)+1:
+                    rand=random.randint(0,totalGroups-1)
+                print(student, " Placed in group ", str(k))  
+                result[rand].append(student)       
+    print("Method groups")
+    print(result)
+ 
+    leftOver = nameList[len(nameList) - remainder:]
+    print(leftOver)
+    for i in range(len(leftOver)):
+        student = leftOver[i]
+        index = randStudents[randStudents['Name']==student].index.values.astype(int)[0]
+            #print(index)
+        groupValue = randStudents.at[index,category]
+        for x in range(0,int(totalGroups)):
+            if groupValue in result[x]:
+                result[x].append(student)
+                break
+            elif x==totalGroups-1:
+                rand=random.randint(0,totalGroups-1)
+                while len(result[rand]) == int(numStud)+1:
+                    rand=random.randint(0,totalGroups-1)
+
+                result[rand].append(student)
+    print("Method groups")
+    print(result)
+
+'''
+    readyBool = False
+    #print("Result: ",result)
+    while(not readyBool):
+        #check that students are not in a group with different choice values
+        for groupnum in range(len(result)):
+            group = result[groupnum]
+            for studentnum in range(len(group)):
+                student = group[studentnum]
+                index = randStudents[randStudents['Name']==student].index.values.astype(int)[0]
+                #print(index)
+                numValue = randStudents.at[index,category]
+                print(student ," student number is: ",numValue)
+                if(str(numValue) == 'nan'):
+                    continue
+                else:
+                    #check if other values in student group
+                    if numValue in group:
+                        nextGroup = groupnum +1
+                        #check if last group
+                        if(groupnum == len(result)-1):
+                            nextGroup = 0
+                        #move student to next group
+                        result[nextGroup].append(student)
+                        #print("moved: ",student," to ",nextGroup)
+                        del group[studentnum]
+                        #move nextGroups first student to this gorup
+                        result[groupnum].append(result[nextGroup][0])
+                        #print("removed: ",result[nextGroup][0])
+                        del result[nextGroup][0]
+                        #print("Result: ",result)
+
+        #check if groups are complete
+        for groupnum in range(len(result)):
+            group = result[groupnum]
+            for student in group:
+                index = randStudents[randStudents['Name']==student].index.values.astype(int)[0]
+                blackValue = randStudents.at[index,"Blacklist"]
+                if str(blackValue) not in group:
+                    if(groupnum == len(result) -1):
+                        readyBool = True
+                        break
+'''
+                        #add numbers to beginning of groups
+                 #       for i in range(len(result)):
+                  #      result[i].insert(0,i)
+
+              #  return result
+
+def customChoiceDif(nameList, numStud, randStudents,category):
+    result = []
+    remainder = len(nameList) % int(numStud)
+    if not remainder == 0:
+        print("Groups may have extra students")
+
+    i = -1
+    for j in range(len(nameList) - remainder):
+        if j % int(numStud) == 0:
+            i = i + 1
+            result.append([])
+        result[i].append(nameList[j])
+
+    leftOver = nameList[len(nameList) - remainder:]
+    for i in range(len(leftOver)):
+        result[i].append(leftOver[i])
+
+    readyBool = False
+    #print("Result: ",result)
+    while(not readyBool):
+        #check that students are not in a group with different choice values
+        for groupnum in range(len(result)):
+            group = result[groupnum]
+            for studentnum in range(len(group)):
+                student = group[studentnum]
+                index = randStudents[randStudents['Name']==student].index.values.astype(int)[0]
+                #print(index)
+                blackValue = randStudents.at[index,"Blacklist"]
+                #print(student ," does not want to pair with: ",blackValue)
+                if(str(blackValue) == 'nan'):
+                    continue
+                else:
+                    #check if blacklistee in students group
+                    if blackValue in group:
+                        nextGroup = groupnum +1
+                        #check if last group
+                        if(groupnum == len(result)-1):
+                            nextGroup = 0
+                        #move student to next group
+                        result[nextGroup].append(student)
+                        #print("moved: ",student," to ",nextGroup)
+                        del group[studentnum]
+                        #move nextGroups first student to this gorup
+                        result[groupnum].append(result[nextGroup][0])
+                        #print("removed: ",result[nextGroup][0])
+                        del result[nextGroup][0]
+                        #print("Result: ",result)
+
+        #check if groups are complete
+        for groupnum in range(len(result)):
+            group = result[groupnum]
+            for student in group:
+                index = randStudents[randStudents['Name']==student].index.values.astype(int)[0]
+                blackValue = randStudents.at[index,"Blacklist"]
+                if str(blackValue) not in group:
+                    if(groupnum == len(result) -1):
+                        readyBool = True
+                        break
+     #add numbers to beginning of groups
+    for i in range(len(result)):
+        result[i].insert(0,i)
+
+    return result
+
+
 def ansToBool(answer):
     if(answer == "Y" or answer == "y"):
+        return True
+
+    else:
+        return False
+
+def ansToSorD(answer):
+    #if Same then true else false
+    if(answer == "S" or answer == "s"):
         return True
 
     else:
@@ -136,12 +328,30 @@ nameList = randStudents['Name'].values
 
 #Get all the information in the column based on the Header name
 #for i in range(3, len (headers))
-categoryOne = headers[2]
-categoryTwo = headers[3]
-categoryThree = headers[4]
+#categoryOne = headers[2]
+#categoryTwo = headers[3]
+#categoryThree = headers[4]
 #print(categoryOne)
 #print(categoryTwo)
 #print(categoryThree)
+
+
+
+
+category1=''
+category2=''
+category3=''
+for i in range(1, len (headers)):
+    if i==2:
+        category1=headers[2]
+    if i==3:
+        category2=headers[3]
+    if i==4:
+        category3=headers[4]
+print(category1)
+print(category2)
+print(category3)
+
 
 #Creates lists for each row and puts it into a list (AKA lists of lists)
 #listOflists = df.values.tolist()
@@ -296,22 +506,37 @@ if(blackBool):
                     if(groupnum == len(result) -1):
                         readyBool = True
                         break
-'''
-    #add numbers to beginning of groups
-   # for i in range(len(result)):    
-    #    result[i].insert(0,i)
+    '''
 #print("Result: ",result)
 
-categoryOneBool = False
-categoryOneText = "Would you like to create groups based on " + categoryOne + "? [Y/N]: "
-categoryOneBool = ansToBool(input(categoryOneText))
-categoryTwoBool = False
-categoryTwoText = "Would you like to create groups based on " + categoryTwo + "? [Y/N]: "
-categoryTwoBool = ansToBool(input(categoryTwoText))
-categoryThreeBool = False
-categoryThreeText = "Would you like to create groups based on " + categoryThree + "? [Y/N]: "
-categoryThreeBool = ansToBool(input(categoryThreeText))
-print("\n\n\n")
+if not category1=='':
+    categoryOneText = "Would you like to create groups based on " + category1 + "? [Y/N]: "
+    categoryOneBool = ansToBool(input(categoryOneText))
+    if categoryOneBool:
+        category1choice=ansToSorD(input("Should groups have similar values or different values? [S/D]:"))
+        print(category1choice)
+
+if not category2=='':
+    categoryTwoText = "Would you like to create groups based on " + category2 + "? [Y/N]: "
+    categoryTwoBool = ansToBool(input(categoryTwoText))
+    if categoryTwoBool:
+        category2choice=ansToSorD(input("Should groups have similar values or different values? [S/D]:"))
+        print(category2choice)
+
+if not category3=='':
+    categoryThreeText = "Would you like to create groups based on " + category3 + "? [Y/N]: "
+    categoryThreeBool = ansToBool(input(categoryThreeText))
+    if categoryThreeBool:
+        category3choice=ansToSorD(input("Should groups have similar values or different values? [S/D]:"))
+        print(category3choice)
+if categoryOneBool:
+    #run custom method here
+    result=[]
+    if category1choice:
+        customChoiceSame(nameList, numStud, randStudents,category1)
+    if not category1choice:
+        result=customChoiceDif(nameList, numStud, randStudents,category1)
+print("\n\n")
 
 
 #df = pd.DataFrame.from_records(result)
