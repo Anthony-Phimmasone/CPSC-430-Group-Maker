@@ -16,6 +16,7 @@ import math
 import csv
 import datetime
 import pandas as pd
+
 def blacklist(nameList, numStud, randStudents):
     result = []
     remainder = len(nameList) % int(numStud)
@@ -368,12 +369,12 @@ numGroup = " "
 groupInput = " "
 while(1):
     groupInput = input("How would you like to have your groups created?\nBy number of students per group[N]?:\nOr\nBy how many groups will be made[G]:\n")
-    if(groupInput == "G" or groupInput == "g" or groupInput == "N" or groupInput == "n"):
+    if(groupInput.upper() == "G" or groupInput.upper() == "N"):
         break
 
 #Check if students in group is excedes maximum
 
-if(groupInput == "N" or groupInput == "n"):
+if(groupInput.upper() == "N"):
     while True:
         numStud = input("How many minimum students per group?")
         #If the input entered is not a number or is longer than the amount of students
@@ -397,7 +398,7 @@ if(groupInput == "N" or groupInput == "n"):
             break
 
 
-if(groupInput == "G" or groupInput == "g"):
+if(groupInput.upper() == "G"):
     while True:
         numGroup = input("How many groups will be made?")
         #numStud = int(math.floor(len(nameList) / int(numGroup)))
@@ -420,7 +421,7 @@ if not randBool:
     randBool = ansToBool(input("Would you like the groups to be completely randomized? [Y/N]: "))
 #TODO: Make sure if 8 groups and 10 students makes 8 groups instead of 10
 
-if(randBool):
+if randBool:
     #creating totally randomized groups
     result = []
     remainder = len(nameList) % int(numStud)
@@ -432,19 +433,24 @@ if(randBool):
         if j % int(numStud) == 0:
             i = i + 1
             result.append([i])
+            if groupInput.upper() == "G" and len(result) == numGroup:
+                for k in range(j, len(nameList)):
+                    result[i].append(nameList[k])
+                break
         result[i].append(nameList[j])
-    leftOver = nameList[len(nameList) - remainder:]
-    for i in range(len(leftOver)):
-        result[i].append(leftOver[i])
+    if groupInput.upper() == "N":
+        leftOver = nameList[len(nameList) - remainder:]
+        for i in range(len(leftOver)):
+            result[i].append(leftOver[i])
 
 
 #if the user wants options
-if(not randBool):
+if not randBool:
     #blacklist bool
     blackBool = ansToBool(input("Would you like to use the blacklist? [Y/N]: "))
 
 #user selected blacklist option
-if(blackBool):
+if blackBool:
     result=[]
     result=blacklist(nameList,numStud,randStudents)
 '''
