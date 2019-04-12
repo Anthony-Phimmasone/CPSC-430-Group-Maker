@@ -1,0 +1,26 @@
+Name,Blacklist,Favorite Pizza Topping,Favorite Color,Favorite Sport
+A1,B2,Cheese,Red,Baseball
+B2,A1,Cheese,Red,Baseball
+C3,A1,Pepperoni,Orange,Basketball
+D4,A1,Pinapple,Yellow,Football
+E5,A1,Italian Sausage,Green,Soccer
+F6,A1,Onions,Blue,Hockey
+G7,A1,Jalepeno,Purple,Volleyball
+H8,A1,Bacon,Pink,Martial Arts
+I9,A1,Mixed,White,Gymnastics
+J10,A1,Cheese,Black,Rugby
+K11,A1,Cheese,Red,None
+L12,A1,Cheese,Orange,Golf
+M13,A1,Pepperoni,Yellow,Tennis
+N14,A1,Pepperoni,Green,Basketball
+O15,A1,Pepperoni,Blue,Football
+P16,A1,Pinapple,Purple,Soccer
+Q17,A1,Pinapple,Pink,Basketball
+R18,A1,Pinapple,White,Football
+S19,A1,Mixed,Black,Soccer
+T20,A1,Mixed,Red,Basketball
+U21,A1,Mixed,Orange,Football
+V22,,Pepperoni,Yellow,Soccer
+W23,,Pepperoni,Green,None
+X24,,Pepperoni,Blue,Golf
+Y25,,Bacon,Purple,Tennis

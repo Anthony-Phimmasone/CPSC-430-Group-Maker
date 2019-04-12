@@ -177,7 +177,6 @@ def customChoiceSame(nameList, numStud, randStudents,category):
                         #print("removed: ",result[nextGroup][0])
                         del result[nextGroup][0]
                         #print("Result: ",result)
-
         #check if groups are complete
         for groupnum in range(len(result)):
             group = result[groupnum]
@@ -301,7 +300,8 @@ while not os.path.exists('./' + filename):
 
 #total csv file
 totalDF = pd.read_csv(filename)
-
+#print successfully read csv
+print("Successfully read csv file")
 print(totalDF)
 '''
 students = []
@@ -418,7 +418,7 @@ if(groupInput.upper() == "G"):
 blackBool = False
 #random bool
 if not randBool:
-    randBool = ansToBool(input("Would you like the groups to be completely randomized? [Y/N]: "))
+    randBool = ansToBool(input("Would you like the groups to be completely randomized? [Y/n]: "))
 #TODO: Make sure if 8 groups and 10 students makes 8 groups instead of 10
 
 if randBool:
@@ -447,7 +447,7 @@ if randBool:
 #if the user wants options
 if not randBool:
     #blacklist bool
-    blackBool = ansToBool(input("Would you like to use the blacklist? [Y/N]: "))
+    blackBool = ansToBool(input("Would you like to use the blacklist? [Y/n]: "))
 
 #user selected blacklist option
 if blackBool:
@@ -459,18 +459,15 @@ if blackBool:
     remainder = len(nameList) % int(numStud)
     if not remainder == 0:
         print("Groups may have extra students")
-
     i = -1
     for j in range(len(nameList) - remainder):
         if j % int(numStud) == 0:
             i = i + 1
             result.append([])
         result[i].append(nameList[j])
-
     leftOver = nameList[len(nameList) - remainder:]
     for i in range(len(leftOver)):
         result[i].append(leftOver[i])
-
     readyBool = False
     #print("Result: ",result)
     while(not readyBool):
@@ -501,7 +498,6 @@ if blackBool:
                         #print("removed: ",result[nextGroup][0])
                         del result[nextGroup][0]
                         #print("Result: ",result)
-
         #check if groups are complete
         for groupnum in range(len(result)):
             group = result[groupnum]
@@ -516,21 +512,21 @@ if blackBool:
 #print("Result: ",result)
 
 if not category1=='':
-    categoryOneText = "Would you like to create groups based on " + category1 + "? [Y/N]: "
+    categoryOneText = "Would you like to create groups based on " + category1 + "? [Y/n]: "
     categoryOneBool = ansToBool(input(categoryOneText))
     if categoryOneBool:
         category1choice=ansToSorD(input("Should groups have similar values or different values? [S/D]:"))
         print(category1choice)
 
 if not category2=='':
-    categoryTwoText = "Would you like to create groups based on " + category2 + "? [Y/N]: "
+    categoryTwoText = "Would you like to create groups based on " + category2 + "? [Y/n]: "
     categoryTwoBool = ansToBool(input(categoryTwoText))
     if categoryTwoBool:
         category2choice=ansToSorD(input("Should groups have similar values or different values? [S/D]:"))
         print(category2choice)
 
 if not category3=='':
-    categoryThreeText = "Would you like to create groups based on " + category3 + "? [Y/N]: "
+    categoryThreeText = "Would you like to create groups based on " + category3 + "? [Y/n]: "
     categoryThreeBool = ansToBool(input(categoryThreeText))
     if categoryThreeBool:
         category3choice=ansToSorD(input("Should groups have similar values or different values? [S/D]:"))
