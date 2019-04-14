@@ -427,21 +427,27 @@ if randBool:
     remainder = len(nameList) % int(numStud)
     if not remainder == 0:
         print("Groups may have extra students")
+    leftOver = []
     i = -1
     for j in range(len(nameList) - remainder):
         #creates a list
         if j % int(numStud) == 0:
             i = i + 1
+            if groupInput.upper() == "G" and i > numGroup:
+                leftOver = nameList[j:]
+                break
             result.append([i])
+            '''
             if groupInput.upper() == "G" and len(result) == numGroup:
                 for k in range(j, len(nameList)):
                     result[i].append(nameList[k])
                 break
+            '''
         result[i].append(nameList[j])
     if groupInput.upper() == "N":
         leftOver = nameList[len(nameList) - remainder:]
-        for i in range(len(leftOver)):
-            result[i].append(leftOver[i])
+    for i in range(len(leftOver)):
+        result[i].append(leftOver[i])
 
 
 #if the user wants options
