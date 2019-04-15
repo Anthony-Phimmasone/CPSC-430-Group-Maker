@@ -433,7 +433,7 @@ if randBool:
         #creates a list
         if j % int(numStud) == 0:
             i = i + 1
-            if groupInput.upper() == "G" and i > numGroup:
+            if groupInput.upper() == "G" and i >= numGroup:
                 leftOver = nameList[j:]
                 break
             result.append([i])
