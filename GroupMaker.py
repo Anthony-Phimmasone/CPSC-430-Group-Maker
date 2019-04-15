@@ -17,25 +17,48 @@ import csv
 import datetime
 import pandas as pd
 
-def blacklist(nameList, numStud, randStudents):
+def genRand(nameList, numStud, groupInput):
+    #creating totally randomized groups
     result = []
     remainder = len(nameList) % int(numStud)
     if not remainder == 0:
         print("Groups may have extra students")
-
+    leftOver = []
     i = -1
     for j in range(len(nameList) - remainder):
+        #creates a list
         if j % int(numStud) == 0:
             i = i + 1
-            result.append([])
+            if groupInput.upper() == "G" and i > numGroup:
+                leftOver = nameList[j:]
+                break
+            result.append([i])
+            '''
+            if groupInput.upper() == "G" and len(result) == numGroup:
+                for k in range(j, len(nameList)):
+                    result[i].append(nameList[k])
+                break
+            '''
         result[i].append(nameList[j])
-
-    leftOver = nameList[len(nameList) - remainder:]
+    if groupInput.upper() == "N":
+        leftOver = nameList[len(nameList) - remainder:]
     for i in range(len(leftOver)):
         result[i].append(leftOver[i])
 
+    return result
+
+
+def blacklist(nameList, numStud, randStudents,groupInput):
+    result = []
+    result = genRand(nameList,numStud,groupInput)
+    totalAttempts = 0
+    #pop off numbers in the beginning
+    for i in range(len(result)):
+        result[i].pop(0)
     readyBool = False
     #print("Result: ",result)
+    
+    totalGroups= len(result)
     while(not readyBool):
         #check that students are not in a group with their blacklistee
         for groupnum in range(len(result)):
@@ -51,31 +74,49 @@ def blacklist(nameList, numStud, randStudents):
                 else:
                     #check if blacklistee in students group
                     if blackValue in group:
-                        nextGroup = groupnum +1
-                        #check if last group
-                        if(groupnum == len(result)-1):
-                            nextGroup = 0
-                        #move student to next group
-                        result[nextGroup].append(student)
-                        #print("moved: ",student," to ",nextGroup)
-                        del group[studentnum]
-                        #move nextGroups first student to this gorup
-                        result[groupnum].append(result[nextGroup][0])
-                        #print("removed: ",result[nextGroup][0])
-                        del result[nextGroup][0]
+                        randGroup = random.randint(0,totalGroups-1)
+                        while randGroup == groupnum:
+                            randGroup = random.randint(0,totalGroups-1)
+                        
+                        randStud = random.randint(0,len(group)-1)
+                        
+                        #get and remove students that need to move
+                        studToMove = result[randGroup].pop(randStud)
+                        currStud = result[groupnum].pop(studentnum)
+                        #print("Random Student Selected is:", studToMove)
+                        #print("Current Student Selected is:", currStud)
+                        #insert STM to current list
+                        result[groupnum].insert(studentnum,studToMove)
+                        #print("STM moved to group "+str(randGroup)+" position "+str(randStud))
+                        
+                        #insert currStud to rand group
+                        result[randGroup].insert(randStud,currStud)
+                        #print("CurrStud moved to group "+str(groupnum)+" position "+str(studentnum))
                         #print("Result: ",result)
+                        
 
         #check if groups are complete
+        foundError = False
         for groupnum in range(len(result)):
             group = result[groupnum]
+            totalAttempts +=1
+            if(totalAttempts >= 1000):
+                print("Blacklist option may be impossible, best attempt used.")
+                readyBool = True
+                break
+            
             for student in group:
                 index = randStudents[randStudents['Name']==student].index.values.astype(int)[0]
                 blackValue = randStudents.at[index,"Blacklist"]
-                if str(blackValue) not in group:
-                    if(groupnum == len(result) -1):
+                if str(blackValue) in group:
+                    readyBool = False
+                    foundError = True
+                elif str(blackValue) not in group:
+                    if(groupnum == len(result) -1) and group.index(student) == len(group)-1 and not foundError:
+                        #print("groups are complete!")
                         readyBool = True
-                        break
-     #add numbers to beginning of groups
+                        
+    #add numbers to beginning of groups
     for i in range(len(result)):
         result[i].insert(0,i)
 
@@ -88,7 +129,7 @@ def customChoiceSame(nameList, numStud, randStudents,category):
     if not remainder == 0:
         print("Groups may have extra students")
 
-    i = 0
+    #i = 0
     groupValue=''
 
     totalGroups=(len(nameList)-remainder)/int(numStud)
@@ -132,7 +173,7 @@ def customChoiceSame(nameList, numStud, randStudents,category):
  
      
     leftOver = nameList[len(nameList) - remainder:]
-    print(leftOver)
+    #print(leftOver)
     for i in range(len(leftOver)):
         student = leftOver[i]
         #print("Leftover Student:",student)
@@ -153,11 +194,23 @@ def customChoiceSame(nameList, numStud, randStudents,category):
                 result[rand].append(student)
 
     for i in range(len(result)):
-        poop = result[i].pop(0)
+        result[i].pop(0)
         result[i].insert(0,i)
     #print(result)
     return result
 
+
+def uniqCat(groupList,randStudents,category):
+    uniqueCat=[]
+    for person in groupList:
+        student = person
+        index = randStudents[randStudents['Name']==student].index.values.astype(int)[0]
+            #print(index)
+        studCat = randStudents.at[index,category]
+        if studCat not in uniqueCat:
+            uniqueCat.append(studCat)
+     
+    return uniqueCat
 
 def customChoiceDif(nameList, numStud, randStudents,category):
     result = []
@@ -165,62 +218,71 @@ def customChoiceDif(nameList, numStud, randStudents,category):
     if not remainder == 0:
         print("Groups may have extra students")
 
-    i = -1
-    for j in range(len(nameList) - remainder):
-        if j % int(numStud) == 0:
-            i = i + 1
-            result.append([])
-        result[i].append(nameList[j])
+    totalGroups=(len(nameList)-remainder)/int(numStud)
+   
+    #create empty groups
+    for x in range(int(totalGroups)):
+        result.append([])
 
+    for j in range(0,len(nameList)-remainder):
+        student = nameList[j]
+        index = randStudents[randStudents['Name']==student].index.values.astype(int)[0]
+            #print(index)
+        studCat = randStudents.at[index,category]
+        #print(student, " value is : ",studCat)
+        for k in range(int(totalGroups)):
+            #print("group search number is:",str(k))
+            #group is empty
+            if len(result[k])==0:
+                result[k].append(student)
+                #print(student, "1st placed into group",str(k))
+                break
+            
+            groupVals = uniqCat(result[k],randStudents,category)
+            if studCat not in groupVals and not len(result[k])==int(numStud):
+                #print(student, "placed into group",str(k))
+                result[k].append(student)
+                break
+            
+            elif k==totalGroups-1:
+                rand=random.randint(0,totalGroups-1)
+                while len(result[rand]) == int(numStud):
+                    rand=random.randint(0,totalGroups-1)
+
+                #print(student, "placed into group",str(k))
+                result[rand].append(student) 
+                break
+            
+    #print("Method groups")
+    #print(result)
+ 
+     
     leftOver = nameList[len(nameList) - remainder:]
+    print(leftOver)
     for i in range(len(leftOver)):
-        result[i].append(leftOver[i])
+        student = leftOver[i]
+        #print("Leftover Student:",student)
+        index = randStudents[randStudents['Name']==student].index.values.astype(int)[0]
+            #print(index)
+        studCat = randStudents.at[index,category]
+        for x in range(0,int(totalGroups)):
+            groupVals = uniqCat(result[k],randStudents,category)
+            if studCat not in groupVals:
+                result[k].append(student)
+                break
+            
+            elif x==totalGroups-1:
+                rand=random.randint(0,totalGroups-1)
+                while len(result[rand]) == int(numStud):
+                    rand=random.randint(0,totalGroups-1)
 
-    readyBool = False
-    #print("Result: ",result)
-    while(not readyBool):
-        #check that students are not in a group with different choice values
-        for groupnum in range(len(result)):
-            group = result[groupnum]
-            for studentnum in range(len(group)):
-                student = group[studentnum]
-                index = randStudents[randStudents['Name']==student].index.values.astype(int)[0]
-                #print(index)
-                blackValue = randStudents.at[index,"Blacklist"]
-                #print(student ," does not want to pair with: ",blackValue)
-                if(str(blackValue) == 'nan'):
-                    continue
-                else:
-                    #check if blacklistee in students group
-                    if blackValue in group:
-                        nextGroup = groupnum +1
-                        #check if last group
-                        if(groupnum == len(result)-1):
-                            nextGroup = 0
-                        #move student to next group
-                        result[nextGroup].append(student)
-                        #print("moved: ",student," to ",nextGroup)
-                        del group[studentnum]
-                        #move nextGroups first student to this gorup
-                        result[groupnum].append(result[nextGroup][0])
-                        #print("removed: ",result[nextGroup][0])
-                        del result[nextGroup][0]
-                        #print("Result: ",result)
-
-        #check if groups are complete
-        for groupnum in range(len(result)):
-            group = result[groupnum]
-            for student in group:
-                index = randStudents[randStudents['Name']==student].index.values.astype(int)[0]
-                blackValue = randStudents.at[index,"Blacklist"]
-                if str(blackValue) not in group:
-                    if(groupnum == len(result) -1):
-                        readyBool = True
-                        break
-     #add numbers to beginning of groups
+                #print("placed in: ",result[rand])
+                result[rand].append(student) 
+                break
+            
     for i in range(len(result)):
         result[i].insert(0,i)
-
+    #print(result)
     return result
 
 
@@ -387,32 +449,8 @@ if not randBool:
 #TODO: Make sure if 8 groups and 10 students makes 8 groups instead of 10
 
 if randBool:
-    #creating totally randomized groups
     result = []
-    remainder = len(nameList) % int(numStud)
-    if not remainder == 0:
-        print("Groups may have extra students")
-    leftOver = []
-    i = -1
-    for j in range(len(nameList) - remainder):
-        #creates a list
-        if j % int(numStud) == 0:
-            i = i + 1
-            if groupInput.upper() == "G" and i > numGroup:
-                leftOver = nameList[j:]
-                break
-            result.append([i])
-            '''
-            if groupInput.upper() == "G" and len(result) == numGroup:
-                for k in range(j, len(nameList)):
-                    result[i].append(nameList[k])
-                break
-            '''
-        result[i].append(nameList[j])
-    if groupInput.upper() == "N":
-        leftOver = nameList[len(nameList) - remainder:]
-    for i in range(len(leftOver)):
-        result[i].append(leftOver[i])
+    result = genRand(nameList,numStud,groupInput)
 
 
 #if the user wants options
@@ -423,64 +461,8 @@ if not randBool:
 #user selected blacklist option
 if blackBool:
     result=[]
-    result=blacklist(nameList,numStud,randStudents)
-'''
-    #creating groups based on blacklist
-    result = []
-    remainder = len(nameList) % int(numStud)
-    if not remainder == 0:
-        print("Groups may have extra students")
-    i = -1
-    for j in range(len(nameList) - remainder):
-        if j % int(numStud) == 0:
-            i = i + 1
-            result.append([])
-        result[i].append(nameList[j])
-    leftOver = nameList[len(nameList) - remainder:]
-    for i in range(len(leftOver)):
-        result[i].append(leftOver[i])
-    readyBool = False
-    #print("Result: ",result)
-    while(not readyBool):
-        #check that students are not in a group with their blacklistee
-        for groupnum in range(len(result)):
-            group = result[groupnum]
-            for studentnum in range(len(group)):
-                student = group[studentnum]
-                index = randStudents[randStudents['Name']==student].index.values.astype(int)[0]
-                #print(index)
-                blackValue = randStudents.at[index,"Blacklist"]
-                #print(student ," does not want to pair with: ",blackValue)
-                if(str(blackValue) == 'nan'):
-                    continue
-                else:
-                    #check if blacklistee in students group
-                    if blackValue in group:
-                        nextGroup = groupnum +1
-                        #check if last group
-                        if(groupnum == len(result)-1):
-                            nextGroup = 0
-                        #move student to next group
-                        result[nextGroup].append(student)
-                        #print("moved: ",student," to ",nextGroup)
-                        del group[studentnum]
-                        #move nextGroups first student to this gorup
-                        result[groupnum].append(result[nextGroup][0])
-                        #print("removed: ",result[nextGroup][0])
-                        del result[nextGroup][0]
-                        #print("Result: ",result)
-        #check if groups are complete
-        for groupnum in range(len(result)):
-            group = result[groupnum]
-            for student in group:
-                index = randStudents[randStudents['Name']==student].index.values.astype(int)[0]
-                blackValue = randStudents.at[index,"Blacklist"]
-                if str(blackValue) not in group:
-                    if(groupnum == len(result) -1):
-                        readyBool = True
-                        break
-    '''
-#print("Result: ",result)
+    result=blacklist(nameList,numStud,randStudents,groupInput)
+
 
 if not category1=='':
     categoryOneText = "Would you like to create groups based on " + category1 + "? [Y/n]: "
