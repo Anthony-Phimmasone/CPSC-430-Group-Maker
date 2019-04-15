@@ -424,9 +424,11 @@ if not randBool:
 if randBool:
     #creating totally randomized groups
     result = []
-    remainder = len(nameList) % int(numStud)
-    if not remainder == 0:
-        print("Groups may have extra students")
+    remainder = 0
+    if groupInput.upper() == "N":
+        remainder = len(nameList) % int(numStud)
+        if not remainder == 0:
+            print("Groups may have extra students")
     leftOver = []
     i = -1
     for j in range(len(nameList) - remainder):
