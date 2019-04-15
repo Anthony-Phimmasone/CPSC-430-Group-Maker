@@ -98,101 +98,66 @@ def customChoiceSame(nameList, numStud, randStudents,category):
         if x not in uniqueCat:
             uniqueCat.append(x)
     
-
+    #create groups
     for x in range(int(totalGroups)):
         result.append([])
-        result[x].append(uniqueCat[x])
+        if x<=len(uniqueCat):
+            result[x].append(uniqueCat[x])
+        else:
+            result[x].append("extra")
     for j in range(0,len(nameList)-remainder):
         student = nameList[j]
         index = randStudents[randStudents['Name']==student].index.values.astype(int)[0]
             #print(index)
         groupValue = randStudents.at[index,category]
-        print(student, " value is : ",groupValue)
+        #print(student, " value is : ",groupValue)
         for k in range(int(totalGroups)):
-
-            if len(result[k])==int(numStud)+1:
-                continue
-            elif groupValue in result[k]:
-                print(student," placed in group ",str(k))
+            #print("group search number is:",str(k))
+            if not len(result[k])==int(numStud)+1 and groupValue in result[k]:
+                #print(student," placed in group ",str(k))
                 result[k].append(student)
                 break
-            elif k==totalGroups-1:
+            elif k==int(totalGroups)-1:
+                #find random group with space and put student in there
                 rand=random.randint(0,totalGroups-1)
-
+                #print("locating random group, randnum is:",rand)
                 while len(result[rand]) == int(numStud)+1:
                     rand=random.randint(0,totalGroups-1)
-                print(student, " Placed in group ", str(k))  
-                result[rand].append(student)       
-    print("Method groups")
-    print(result)
+                #print("locating random group, randnum is:",rand)
+                #print(student, " Placed in group ", str(rand))  
+                result[rand].append(student)
+                break
+    #print("Method groups")
+    #print(result)
  
+     
     leftOver = nameList[len(nameList) - remainder:]
     print(leftOver)
     for i in range(len(leftOver)):
         student = leftOver[i]
+        #print("Leftover Student:",student)
         index = randStudents[randStudents['Name']==student].index.values.astype(int)[0]
             #print(index)
         groupValue = randStudents.at[index,category]
         for x in range(0,int(totalGroups)):
             if groupValue in result[x]:
                 result[x].append(student)
+                #print("placed in: ",result[x])
                 break
             elif x==totalGroups-1:
                 rand=random.randint(0,totalGroups-1)
                 while len(result[rand]) == int(numStud)+1:
                     rand=random.randint(0,totalGroups-1)
 
+                #print("placed in: ",result[rand])
                 result[rand].append(student)
-    print("Method groups")
-    print(result)
 
-'''
-    readyBool = False
-    #print("Result: ",result)
-    while(not readyBool):
-        #check that students are not in a group with different choice values
-        for groupnum in range(len(result)):
-            group = result[groupnum]
-            for studentnum in range(len(group)):
-                student = group[studentnum]
-                index = randStudents[randStudents['Name']==student].index.values.astype(int)[0]
-                #print(index)
-                numValue = randStudents.at[index,category]
-                print(student ," student number is: ",numValue)
-                if(str(numValue) == 'nan'):
-                    continue
-                else:
-                    #check if other values in student group
-                    if numValue in group:
-                        nextGroup = groupnum +1
-                        #check if last group
-                        if(groupnum == len(result)-1):
-                            nextGroup = 0
-                        #move student to next group
-                        result[nextGroup].append(student)
-                        #print("moved: ",student," to ",nextGroup)
-                        del group[studentnum]
-                        #move nextGroups first student to this gorup
-                        result[groupnum].append(result[nextGroup][0])
-                        #print("removed: ",result[nextGroup][0])
-                        del result[nextGroup][0]
-                        #print("Result: ",result)
-        #check if groups are complete
-        for groupnum in range(len(result)):
-            group = result[groupnum]
-            for student in group:
-                index = randStudents[randStudents['Name']==student].index.values.astype(int)[0]
-                blackValue = randStudents.at[index,"Blacklist"]
-                if str(blackValue) not in group:
-                    if(groupnum == len(result) -1):
-                        readyBool = True
-                        break
-'''
-                        #add numbers to beginning of groups
-                 #       for i in range(len(result)):
-                  #      result[i].insert(0,i)
+    for i in range(len(result)):
+        poop = result[i].pop(0)
+        result[i].insert(0,i)
+    #print(result)
+    return result
 
-              #  return result
 
 def customChoiceDif(nameList, numStud, randStudents,category):
     result = []
@@ -424,18 +389,16 @@ if not randBool:
 if randBool:
     #creating totally randomized groups
     result = []
-    remainder = 0
-    if groupInput.upper() == "N":
-        remainder = len(nameList) % int(numStud)
-        if not remainder == 0:
-            print("Groups may have extra students")
+    remainder = len(nameList) % int(numStud)
+    if not remainder == 0:
+        print("Groups may have extra students")
     leftOver = []
     i = -1
     for j in range(len(nameList) - remainder):
         #creates a list
         if j % int(numStud) == 0:
             i = i + 1
-            if groupInput.upper() == "G" and i >= numGroup:
+            if groupInput.upper() == "G" and i > numGroup:
                 leftOver = nameList[j:]
                 break
             result.append([i])
@@ -539,13 +502,33 @@ if not category3=='':
     if categoryThreeBool:
         category3choice=ansToSorD(input("Should groups have similar values or different values? [S/D]:"))
         print(category3choice)
+
+#category1 choice
 if categoryOneBool:
     #run custom method here
     result=[]
     if category1choice:
-        customChoiceSame(nameList, numStud, randStudents,category1)
+        result = customChoiceSame(nameList, numStud, randStudents,category1)
     if not category1choice:
         result=customChoiceDif(nameList, numStud, randStudents,category1)
+        
+#category2 choice
+if categoryTwoBool:
+    #run custom method here
+    result=[]
+    if category2choice:
+        result = customChoiceSame(nameList, numStud, randStudents,category2)
+    if not category2choice:
+        result=customChoiceDif(nameList, numStud, randStudents,category2)
+        
+#category3 choice
+if categoryThreeBool:
+    #run custom method here
+    result=[]
+    if category3choice:
+        result = customChoiceSame(nameList, numStud, randStudents,category3)
+    if not category3choice:
+        result=customChoiceDif(nameList, numStud, randStudents,category3)
 print("\n\n")
 
 
