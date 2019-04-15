@@ -40,10 +40,14 @@ def genRand(nameList, numStud, groupInput):
                 break
             '''
         result[i].append(nameList[j])
+    thisIndexCount = 0
     if groupInput.upper() == "N":
         leftOver = nameList[len(nameList) - remainder:]
+        thisIndexCount = thisIndexCount + 1
     for i in range(len(leftOver)):
-        result[i].append(leftOver[i])
+        if thisIndexCount == len(result):
+            thisIndexCount == 0
+            result[i].append(leftOver[i])
 
     return result
 
