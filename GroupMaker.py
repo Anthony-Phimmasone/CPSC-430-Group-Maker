@@ -20,16 +20,18 @@ import pandas as pd
 def genRand(nameList, numStud, groupInput):
     #creating totally randomized groups
     result = []
-    remainder = len(nameList) % int(numStud)
-    if not remainder == 0:
-        print("Groups may have extra students")
+    remainder = 0
+    if groupInput.upper() == "N":
+        remainder = len(nameList) % int(numStud)
+        if not remainder == 0:
+            print("Groups may have extra students")
     leftOver = []
     i = -1
     for j in range(len(nameList) - remainder):
         #creates a list
         if j % int(numStud) == 0:
             i = i + 1
-            if groupInput.upper() == "G" and i > numGroup:
+            if groupInput.upper() == "G" and i >= numGroup:
                 leftOver = nameList[j:]
                 break
             result.append([i])
@@ -46,7 +48,7 @@ def genRand(nameList, numStud, groupInput):
         thisIndexCount = thisIndexCount + 1
     for i in range(len(leftOver)):
         if thisIndexCount == len(result):
-            thisIndexCount == 0
+            thisIndexCount = 0
             result[i].append(leftOver[i])
 
     return result
