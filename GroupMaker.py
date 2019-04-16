@@ -17,7 +17,7 @@ import csv
 import datetime
 import pandas as pd
 
-def genRand(nameList, numStud, groupInput):
+def genRand(nameList, numStud, numGroup, groupInput):
     #creating totally randomized groups
     result = []
     remainder = 0
@@ -35,12 +35,6 @@ def genRand(nameList, numStud, groupInput):
                 leftOver = nameList[j:]
                 break
             result.append([i])
-            '''
-            if groupInput.upper() == "G" and len(result) == numGroup:
-                for k in range(j, len(nameList)):
-                    result[i].append(nameList[k])
-                break
-            '''
         result[i].append(nameList[j])
     if groupInput.upper() == "N":
         leftOver = nameList[len(nameList) - remainder:]
@@ -54,9 +48,9 @@ def genRand(nameList, numStud, groupInput):
     return result
 
 
-def blacklist(nameList, numStud, randStudents,groupInput):
+def blacklist(nameList, numStud, numGroup, randStudents, groupInput):
     result = []
-    result = genRand(nameList,numStud,groupInput)
+    result = genRand(nameList,numStud,numGroup,groupInput)
     totalAttempts = 0
     #pop off numbers in the beginning
     for i in range(len(result)):
@@ -129,7 +123,7 @@ def blacklist(nameList, numStud, randStudents,groupInput):
     return result
 
 
-def customChoiceSame(nameList, numStud, randStudents,category):
+def customChoiceSame(nameList, numStud, numGroup, randStudents, category):
     result = []
     remainder = len(nameList) % int(numStud)
     if not remainder == 0:
@@ -138,7 +132,11 @@ def customChoiceSame(nameList, numStud, randStudents,category):
     #i = 0
     groupValue=''
 
-    totalGroups=(len(nameList)-remainder)/int(numStud)
+    if numGroup == " ":
+        totalGroups=(len(nameList)-remainder)/int(numStud)
+    else:
+        totalGroups = int(numGroup)
+
     catList=randStudents[category].tolist()
     uniqueCat=[]
     for x in catList:
@@ -218,13 +216,16 @@ def uniqCat(groupList,randStudents,category):
      
     return uniqueCat
 
-def customChoiceDif(nameList, numStud, randStudents,category):
+def customChoiceDif(nameList, numStud, numGroup, randStudents, category):
     result = []
     remainder = len(nameList) % int(numStud)
     if not remainder == 0:
         print("Groups may have extra students")
 
-    totalGroups=(len(nameList)-remainder)/int(numStud)
+    if numGroup == " ":
+        totalGroups=(len(nameList)-remainder)/int(numStud)
+    else:
+        totalGroups = int(numGroup)
    
     #create empty groups
     for x in range(int(totalGroups)):
@@ -382,9 +383,11 @@ for i in range(1, len (headers)):
         category2=headers[3]
     if i==4:
         category3=headers[4]
+'''
 print(category1)
 print(category2)
 print(category3)
+'''
 
 
 #Creates lists for each row and puts it into a list (AKA lists of lists)
@@ -456,7 +459,7 @@ if not randBool:
 
 if randBool:
     result = []
-    result = genRand(nameList,numStud,groupInput)
+    result = genRand(nameList,numStud,numGroup,groupInput)
 
 
 #if the user wants options
@@ -467,7 +470,7 @@ if not randBool:
 #user selected blacklist option
 if blackBool:
     result=[]
-    result=blacklist(nameList,numStud,randStudents,groupInput)
+    result=blacklist(nameList,numStud,numGroup,randStudents,groupInput)
 
 
 if not category1=='':
@@ -496,27 +499,27 @@ if categoryOneBool:
     #run custom method here
     result=[]
     if category1choice:
-        result = customChoiceSame(nameList, numStud, randStudents,category1)
+        result = customChoiceSame(nameList, numStud, numGroup, randStudents, category1)
     if not category1choice:
-        result=customChoiceDif(nameList, numStud, randStudents,category1)
+        result=customChoiceDif(nameList, numStud, numGroup, randStudents, category1)
         
 #category2 choice
 if categoryTwoBool:
     #run custom method here
     result=[]
     if category2choice:
-        result = customChoiceSame(nameList, numStud, randStudents,category2)
+        result = customChoiceSame(nameList, numStud, numGroup, randStudents, category2)
     if not category2choice:
-        result=customChoiceDif(nameList, numStud, randStudents,category2)
+        result=customChoiceDif(nameList, numStud, numGroup, randStudents, category2)
         
 #category3 choice
 if categoryThreeBool:
     #run custom method here
     result=[]
     if category3choice:
-        result = customChoiceSame(nameList, numStud, randStudents,category3)
+        result = customChoiceSame(nameList, numStud, numGroup, randStudents, category3)
     if not category3choice:
-        result=customChoiceDif(nameList, numStud, randStudents,category3)
+        result=customChoiceDif(nameList, numStud, numGroup, randStudents, category3)
 print("\n\n")
 
 
