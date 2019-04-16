@@ -15,7 +15,29 @@ import random
 import math
 import csv
 import datetime
+import numpy as np
 import pandas as pd
+
+def printOutput(result, randStudents,headers):
+    for i in range(len(result)):
+        for j in range(0, len(result[i])):
+            if(j ==0):
+                print("Group", result[i][j], ": ", end = "\n", sep = "")
+                print("|"," ".join(headers),"|")
+                print("___________________________________")
+            else:
+                student = result[i][j]
+                #print(student)
+                index = randStudents[randStudents['Name']==student].index.values.astype(int)[0]
+                #print(index)
+                studRow = randStudents.iloc[index].values
+                studRow = list(studRow)
+                studRow = [' ' if x is np.nan else x for x in studRow]
+                print("|"," ".join(studRow),"|")
+                #print(studRow)
+                print("___________________________________")
+        print("\n\n")
+
 
 def genRand(nameList, numStud, numGroup, groupInput):
     #creating totally randomized groups
@@ -48,15 +70,19 @@ def genRand(nameList, numStud, numGroup, groupInput):
     return result
 
 
-def blacklist(nameList, numStud, numGroup, randStudents, groupInput):
-    result = []
-    result = genRand(nameList,numStud,numGroup,groupInput)
+def blacklist(nameList, numStud, numGroup, randStudents, groupInput, possResult):
+    if(len(possResult)==0):
+        result = []
+        result = genRand(nameList,numStud,numGroup,groupInput)
+    else:
+        result = possResult
+    
     totalAttempts = 0
     #pop off numbers in the beginning
     for i in range(len(result)):
         result[i].pop(0)
     readyBool = False
-    #print("Result: ",result)
+    print("Result: ",result)
     
     totalGroups= len(result)
     while(not readyBool):
@@ -78,7 +104,7 @@ def blacklist(nameList, numStud, numGroup, randStudents, groupInput):
                         while randGroup == groupnum:
                             randGroup = random.randint(0,totalGroups-1)
                         
-                        randStud = random.randint(0,len(group)-1)
+                        randStud = random.randint(0,len(result[randGroup])-1)
                         
                         #get and remove students that need to move
                         studToMove = result[randGroup].pop(randStud)
@@ -125,18 +151,31 @@ def blacklist(nameList, numStud, numGroup, randStudents, groupInput):
 
 def customChoiceSame(nameList, numStud, numGroup, randStudents, category):
     result = []
-    remainder = len(nameList) % int(numStud)
+    remainder = 0
     if not remainder == 0:
         print("Groups may have extra students")
 
     #i = 0
     groupValue=''
-
+    leftOver = []
     if numGroup == " ":
         totalGroups=(len(nameList)-remainder)/int(numStud)
+        leftOver = nameList[len(nameList) - remainder:]
+        remainder = len(nameList) % int(numStud)
     else:
+        i = -1
+        for j in range(len(nameList) - remainder):
+            #creates a list
+            if j % int(numStud) == 0:
+                i = i + 1
+                if groupInput.upper() == "G" and i >= numGroup:
+                    leftOver = nameList[j:]
+                    break
         totalGroups = int(numGroup)
-
+        remainder = int(len(leftOver))
+        
+    print("leftover:")
+    print(leftOver)
     catList=randStudents[category].tolist()
     uniqueCat=[]
     for x in catList:
@@ -146,38 +185,45 @@ def customChoiceSame(nameList, numStud, numGroup, randStudents, category):
     #create groups
     for x in range(int(totalGroups)):
         result.append([])
-        if x<=len(uniqueCat):
+        if x<len(uniqueCat):
             result[x].append(uniqueCat[x])
         else:
             result[x].append("extra")
+    
+    print(result)
+    print("Number of students: "+str(numStud))
+    print("Number of Groups: "+str(numGroup))
+    
+    
     for j in range(0,len(nameList)-remainder):
         student = nameList[j]
         index = randStudents[randStudents['Name']==student].index.values.astype(int)[0]
             #print(index)
         groupValue = randStudents.at[index,category]
-        #print(student, " value is : ",groupValue)
+        print(student, " value is : ",groupValue)
         for k in range(int(totalGroups)):
             #print("group search number is:",str(k))
             if not len(result[k])==int(numStud)+1 and groupValue in result[k]:
-                #print(student," placed in group ",str(k))
+                print(student," placed in group ",str(k))
                 result[k].append(student)
                 break
             elif k==int(totalGroups)-1:
                 #find random group with space and put student in there
-                rand=random.randint(0,totalGroups-1)
-                #print("locating random group, randnum is:",rand)
+                rand=random.randint(0,int(totalGroups)-1)
+                print("locating random group, randnum is:",rand)
                 while len(result[rand]) == int(numStud)+1:
-                    rand=random.randint(0,totalGroups-1)
-                #print("locating random group, randnum is:",rand)
-                #print(student, " Placed in group ", str(rand))  
+                    rand=random.randint(0,int(totalGroups)-1)
+                print("locating random group, randnum is:",rand)
+                print(student, " Placed in group ", str(rand))  
                 result[rand].append(student)
                 break
-    #print("Method groups")
-    #print(result)
+    print("Method groups")
+    print(result)
  
-     
+    '''
     leftOver = nameList[len(nameList) - remainder:]
-    #print(leftOver)
+    print(leftOver)
+    '''
     for i in range(len(leftOver)):
         student = leftOver[i]
         #print("Leftover Student:",student)
@@ -191,7 +237,7 @@ def customChoiceSame(nameList, numStud, numGroup, randStudents, category):
                 break
             elif x==totalGroups-1:
                 rand=random.randint(0,totalGroups-1)
-                while len(result[rand]) == int(numStud)+1:
+                while len(result[rand]) == int(numStud)+2:
                     rand=random.randint(0,totalGroups-1)
 
                 #print("placed in: ",result[rand])
@@ -218,15 +264,28 @@ def uniqCat(groupList,randStudents,category):
 
 def customChoiceDif(nameList, numStud, numGroup, randStudents, category):
     result = []
-    remainder = len(nameList) % int(numStud)
+    remainder = 0
     if not remainder == 0:
         print("Groups may have extra students")
 
+
+    leftOver = []
     if numGroup == " ":
         totalGroups=(len(nameList)-remainder)/int(numStud)
+        leftOver = nameList[len(nameList) - remainder:]
+        remainder = len(nameList) % int(numStud)
     else:
+        i = -1
+        for j in range(len(nameList) - remainder):
+            #creates a list
+            if j % int(numStud) == 0:
+                i = i + 1
+                if groupInput.upper() == "G" and i >= numGroup:
+                    leftOver = nameList[j:]
+                    break
         totalGroups = int(numGroup)
-   
+        remainder = int(len(leftOver))
+        
     #create empty groups
     for x in range(int(totalGroups)):
         result.append([])
@@ -280,7 +339,7 @@ def customChoiceDif(nameList, numStud, numGroup, randStudents, category):
             
             elif x==totalGroups-1:
                 rand=random.randint(0,totalGroups-1)
-                while len(result[rand]) == int(numStud):
+                while len(result[rand]) == int(numStud)+1:
                     rand=random.randint(0,totalGroups-1)
 
                 #print("placed in: ",result[rand])
@@ -452,6 +511,11 @@ if(groupInput.upper() == "G"):
 #Menu:
 
 blackBool = False
+
+categoryOneBool = False
+categoryTwoBool = False
+categoryThreeBool = False
+
 #random bool
 if not randBool:
     randBool = ansToBool(input("Would you like the groups to be completely randomized? [Y/n]: "))
@@ -467,37 +531,27 @@ if not randBool:
     #blacklist bool
     blackBool = ansToBool(input("Would you like to use the blacklist? [Y/n]: "))
 
-#user selected blacklist option
-if blackBool:
-    result=[]
-    result=blacklist(nameList,numStud,numGroup,randStudents,groupInput)
 
-
-if not category1=='':
+if not category1=='' and not randBool:
     categoryOneText = "Would you like to create groups based on " + category1 + "? [Y/n]: "
     categoryOneBool = ansToBool(input(categoryOneText))
     if categoryOneBool:
         category1choice=ansToSorD(input("Should groups have similar values or different values? [S/D]:"))
         print(category1choice)
 
-if not category2=='':
+if not category2=='' and not categoryOneBool and not randBool:
     categoryTwoText = "Would you like to create groups based on " + category2 + "? [Y/n]: "
     categoryTwoBool = ansToBool(input(categoryTwoText))
     if categoryTwoBool:
         category2choice=ansToSorD(input("Should groups have similar values or different values? [S/D]:"))
         print(category2choice)
 
-if not category3=='':
+if not category3=='' and not categoryOneBool and not categoryTwoBool and not randBool:
     categoryThreeText = "Would you like to create groups based on " + category3 + "? [Y/n]: "
     categoryThreeBool = ansToBool(input(categoryThreeText))
     if categoryThreeBool:
         category3choice=ansToSorD(input("Should groups have similar values or different values? [S/D]:"))
         print(category3choice)
-
-if randBool == False and blackBool == False and categoryOneBool == False and categoryTwoBool == False and categoryThreeBool == False:
-    randBool = True
-    result = []
-    result = genRand(nameList,numStud,numGroup,groupInput)
     
 
 #category1 choice
@@ -526,8 +580,24 @@ if categoryThreeBool:
         result = customChoiceSame(nameList, numStud, numGroup, randStudents, category3)
     if not category3choice:
         result=customChoiceDif(nameList, numStud, numGroup, randStudents, category3)
+
+#user selected just blacklist option
+if blackBool and not categoryOneBool and not categoryTwoBool and not categoryThreeBool:
+    result=[]
+    empty = []
+    result=blacklist(nameList,numStud,numGroup,randStudents,groupInput,empty)
+
+#user selected blacklist and a category
+if ((blackBool and categoryOneBool) or (blackBool and categoryTwoBool) or (blackBool and categoryThreeBool)):
+    result=blacklist(nameList,numStud,numGroup,randStudents,groupInput,result)
+
 print("\n\n")
 
+
+if randBool == False and blackBool == False and categoryOneBool == False and categoryTwoBool == False and categoryThreeBool == False:
+    randBool = True
+    result = []
+    result = genRand(nameList,numStud,numGroup,groupInput)
 
 #df = pd.DataFrame.from_records(result)
 #print(df)
@@ -535,6 +605,7 @@ print("\n\n")
 #df.to_csv('GroupMakerOutput.csv')
 #if client wants list to be completely randomized
 
+'''
 for i in range(len(result)):
     print("Group", i, ": ", end = "", sep = "")
     for j in range(1, len(result[i])):
@@ -542,6 +613,11 @@ for i in range(len(result)):
             print(result[i][j], ", ", sep = "", end="")
         else:
             print(result[i][j])
+'''
+
+#print("new print") 
+printOutput(result,randStudents,headers)           
+            
 timestamp = datetime.datetime.now().strftime("%m-%d-(%I-%M)")
 outputFile = "GroupMakerOutput"+timestamp+".csv"
 
