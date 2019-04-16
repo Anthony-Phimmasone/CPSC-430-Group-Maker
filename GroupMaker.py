@@ -42,7 +42,6 @@ def genRand(nameList, numStud, groupInput):
                 break
             '''
         result[i].append(nameList[j])
-    #thisIndexCount = 0
     if groupInput.upper() == "N":
         leftOver = nameList[len(nameList) - remainder:]
     k = 0
