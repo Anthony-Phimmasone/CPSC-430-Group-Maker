@@ -494,6 +494,12 @@ if not category3=='':
         category3choice=ansToSorD(input("Should groups have similar values or different values? [S/D]:"))
         print(category3choice)
 
+if randBool == False and categoryOneBool == False and categoryTwoBool == False and categoryThreeBool == False:
+    randBool = True
+    result = []
+    result = genRand(nameList,numStud,numGroup,groupInput)
+    
+
 #category1 choice
 if categoryOneBool:
     #run custom method here
