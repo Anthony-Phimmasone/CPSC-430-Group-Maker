@@ -616,7 +616,36 @@ for i in range(len(result)):
 '''
 
 #print("new print") 
-printOutput(result,randStudents,headers)           
+#printOutput(result,randStudents,headers)
+
+move_input = " "
+while not move_input.upper() == "N":
+    printOutput(result, randStudents, headers)
+    move_input = input("Would you like to change the groups? (Y/n)")
+    if move_input.upper() == "Y":
+        valid_student = False
+        while not valid_student:
+            to_move = input("Enter the name of the student you want to move: ")
+            found = False
+            for i in range(len(result)):
+                for j in range(len(result[i])):
+                    if result[i][j] == to_move:
+                        found = True
+                        valid_group = False
+                        while not valid_group:
+                            new_group = int(input("Enter the number of the group to move the student to: "))
+                            if new_group >= len(result[i]):
+                                print("Group doesn't exist")
+                            else:
+                                valid_group = True
+                        result[i].remove(to_move)
+                        result[new_group].append(to_move)
+                        break
+                if found:
+                    valid_student = True
+                    break
+            if not found:
+                print("Student could not be found")
             
 timestamp = datetime.datetime.now().strftime("%m-%d-(%I-%M)")
 outputFile = "GroupMakerOutput"+timestamp+".csv"
