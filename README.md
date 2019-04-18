@@ -29,6 +29,18 @@ Enter the input CSV when prompted and answer the questions as they appear to cre
 ** Make sure that the input CSV is in the same directory as the program**<br/>
 The output CSV is stored in the same folder as the program 
 
+## Input CSV Details
+The input CSV must be in the following format. The first two columns must be labled "Name" and "Blacklist" in that order. <br/>The last three columns are custom categories and can be labled as anything the user wishes. 
+## CSV Format
+
+| Name    | Blacklist| Custom Category 1 (Favorite Console)  | Custom Category 2 (Favorite Color)|Custom Category 3 (Favorite Sport) |
+|:-------:|:--------:|:------:|:-----:|:-----:|
+| Jose    | Daniel   | Xbox   | Red   |   Soccer   |
+| Daniel  |          | Wii    | Blue    |  Basketball    |
+|Steve    |   Mary   | PS4    |  Blue    |  Baseball    |
+| Mary    |          | Wii    |  Green    |   Soccer   |
+
+
 ## Authors
 <ul>
   <li>Anthony Phimmasone</li>
