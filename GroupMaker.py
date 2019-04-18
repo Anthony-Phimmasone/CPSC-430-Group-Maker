@@ -18,6 +18,7 @@ import datetime
 import numpy as np
 import pandas as pd
 
+
 def printTitle():
     print("   ______                          __  ___      __            ")
     print("  / ____/________  __  ______     /  |/  /___ _/ /_____  _____")
@@ -25,26 +26,32 @@ def printTitle():
     print("/ /_/ / /  / /_/ / /_/ / /_/ /  / /  / / /_/ / ,< /  __/ /    ")
     print("\____/_/   \____/\__,_/ .___/  /_/  /_/\__,_/_/|_|\___/_/     ")
     print("                     /_/                                      ")
+    print("\n")
 
-def printOutput(result, randStudents,headers):
+
+def printOutput(result):
+    '''
     for i in range(len(result)):
-        for j in range(0, len(result[i])):
-            if(j ==0):
-                print("Group", result[i][j], ": ", end = "\n", sep = "")
-                print("|"," ".join(headers),"|")
-                print("___________________________________")
+        print("Group", i, ": ", end = "", sep = "")
+    for j in range(1, len(result[i])):
+        print(result[i][j])
+        if (not j == len(result[i]) - 1):
+            print(result[i][j], ", ", sep = "", end="")
+        else:
+            print(result[i][j])
+    '''
+    print("RESULT GROUPS:")
+    for group in result:
+        for val in range(len(group)):
+            if val == 0:
+                print("Group", str(group[val]),":", sep = "")
             else:
-                student = result[i][j]
-                #print(student)
-                index = randStudents[randStudents['Name']==student].index.values.astype(int)[0]
-                #print(index)
-                studRow = randStudents.iloc[index].values
-                studRow = list(studRow)
-                studRow = [' ' if x is np.nan else x for x in studRow]
-                print("|"," ".join(studRow),"|")
-                #print(studRow)
-                print("___________________________________")
-        print("\n\n")
+                if (not val == len(group) - 1):
+                    print(group[val], ", ", sep = "", end="")
+                else:
+                    print(group[val])
+        print("\n")
+    print("\n\n")
 
 
 def genRand(nameList, numStud, numGroup, groupInput):
@@ -79,8 +86,8 @@ def genRand(nameList, numStud, numGroup, groupInput):
 
 
 def blacklist(nameList, numStud, numGroup, randStudents, groupInput, possResult):
+    result = []
     if(len(possResult)==0):
-        result = []
         result = genRand(nameList,numStud,numGroup,groupInput)
     else:
         result = possResult
@@ -90,7 +97,7 @@ def blacklist(nameList, numStud, numGroup, randStudents, groupInput, possResult)
     for i in range(len(result)):
         result[i].pop(0)
     readyBool = False
-    print("Result: ",result)
+    #print("Result: ",result)
     
     totalGroups= len(result)
     while(not readyBool):
@@ -103,7 +110,7 @@ def blacklist(nameList, numStud, numGroup, randStudents, groupInput, possResult)
                 #print(index)
                 blackValue = randStudents.at[index,"Blacklist"]
                 #print(student ," does not want to pair with: ",blackValue)
-                if(str(blackValue) == 'nan'):
+                if(str(blackValue) == np.nan):
                     continue
                 else:
                     #check if blacklistee in students group
@@ -145,6 +152,7 @@ def blacklist(nameList, numStud, numGroup, randStudents, groupInput, possResult)
                 if str(blackValue) in group:
                     readyBool = False
                     foundError = True
+                    #print(foundError)
                 elif str(blackValue) not in group:
                     if(groupnum == len(result) -1) and group.index(student) == len(group)-1 and not foundError:
                         #print("groups are complete!")
@@ -182,8 +190,8 @@ def customChoiceSame(nameList, numStud, numGroup, randStudents, category):
         totalGroups = int(numGroup)
         remainder = int(len(leftOver))
         
-    print("leftover:")
-    print(leftOver)
+    #print("leftover:")
+    #print(leftOver)
     catList=randStudents[category].tolist()
     uniqueCat=[]
     for x in catList:
@@ -198,9 +206,9 @@ def customChoiceSame(nameList, numStud, numGroup, randStudents, category):
         else:
             result[x].append("extra")
     
-    print(result)
-    print("Number of students: "+str(numStud))
-    print("Number of Groups: "+str(numGroup))
+    #print(result)
+    #print("Number of students: "+str(numStud))
+    #print("Number of Groups: "+str(numGroup))
     
     
     for j in range(0,len(nameList)-remainder):
@@ -208,21 +216,21 @@ def customChoiceSame(nameList, numStud, numGroup, randStudents, category):
         index = randStudents[randStudents['Name']==student].index.values.astype(int)[0]
             #print(index)
         groupValue = randStudents.at[index,category]
-        print(student, " value is : ",groupValue)
+        #print(student, " value is : ",groupValue)
         for k in range(int(totalGroups)):
             #print("group search number is:",str(k))
             if not len(result[k])==int(numStud)+1 and groupValue in result[k]:
-                print(student," placed in group ",str(k))
+                #print(student," placed in group ",str(k))
                 result[k].append(student)
                 break
             elif k==int(totalGroups)-1:
                 #find random group with space and put student in there
                 rand=random.randint(0,int(totalGroups)-1)
-                print("locating random group, randnum is:",rand)
+                #print("locating random group, randnum is:",rand)
                 while len(result[rand]) == int(numStud)+1:
                     rand=random.randint(0,int(totalGroups)-1)
-                print("locating random group, randnum is:",rand)
-                print(student, " Placed in group ", str(rand))  
+                #print("locating random group, randnum is:",rand)
+                #print(student, " Placed in group ", str(rand))  
                 result[rand].append(student)
                 break
     print("Method groups")
@@ -332,7 +340,7 @@ def customChoiceDif(nameList, numStud, numGroup, randStudents, category):
  
      
     leftOver = nameList[len(nameList) - remainder:]
-    print(leftOver)
+    #print(leftOver)
     for i in range(len(leftOver)):
         student = leftOver[i]
         #print("Leftover Student:",student)
@@ -379,11 +387,7 @@ randBool = False
 
 
 
-#print Title
 printTitle()
-
-
-
 
 #Ask the user to enter in a CSV filename
 #filename = input("Enter a filename (include the .csv): ")
@@ -410,7 +414,7 @@ while not os.path.exists('./' + filename):
 #total csv file
 totalDF = pd.read_csv(filename)
 #print successfully read csv
-print("Successfully read csv file")
+print("Successfully Read CSV File")
 print(totalDF)
 '''
 students = []
@@ -553,21 +557,21 @@ if not category1=='' and not randBool:
     categoryOneBool = ansToBool(input(categoryOneText))
     if categoryOneBool:
         category1choice=ansToSorD(input("Should groups have similar values or different values? [S/D]:"))
-        print(category1choice)
+        #print(category1choice)
 
 if not category2=='' and not categoryOneBool and not randBool:
     categoryTwoText = "Would you like to create groups based on " + category2 + "? [Y/n]: "
     categoryTwoBool = ansToBool(input(categoryTwoText))
     if categoryTwoBool:
         category2choice=ansToSorD(input("Should groups have similar values or different values? [S/D]:"))
-        print(category2choice)
+        #print(category2choice)
 
 if not category3=='' and not categoryOneBool and not categoryTwoBool and not randBool:
     categoryThreeText = "Would you like to create groups based on " + category3 + "? [Y/n]: "
     categoryThreeBool = ansToBool(input(categoryThreeText))
     if categoryThreeBool:
         category3choice=ansToSorD(input("Should groups have similar values or different values? [S/D]:"))
-        print(category3choice)
+        #print(category3choice)
     
 
 #category1 choice
@@ -607,13 +611,14 @@ if blackBool and not categoryOneBool and not categoryTwoBool and not categoryThr
 if ((blackBool and categoryOneBool) or (blackBool and categoryTwoBool) or (blackBool and categoryThreeBool)):
     result=blacklist(nameList,numStud,numGroup,randStudents,groupInput,result)
 
-print("\n\n")
-
 
 if randBool == False and blackBool == False and categoryOneBool == False and categoryTwoBool == False and categoryThreeBool == False:
     randBool = True
     result = []
     result = genRand(nameList,numStud,numGroup,groupInput)
+
+
+print("\n\n")
 
 #df = pd.DataFrame.from_records(result)
 #print(df)
@@ -631,9 +636,42 @@ for i in range(len(result)):
             print(result[i][j])
 '''
 
-#print("new print") 
-printOutput(result,randStudents,headers)           
-            
+#print("result print") 
+#print(result)
+
+move_input = " "
+while not move_input.upper() == "N":
+    printOutput(result)
+    move_input = input("Would you like to change the groups? (Y/n)")
+    if move_input.upper() == "Y":
+        valid_student = False
+        while not valid_student:
+            to_move = input("Enter the name of the student you want to move: ")
+            found = False
+            for i in range(len(result)):
+                for j in range(len(result[i])):
+                    if result[i][j] == to_move:
+                        found = True
+                        valid_group = False
+                        while not valid_group:
+                            new_group = int(input("Enter the number of the group to move the student to: "))
+                            if new_group >= len(result):
+                                print("Group doesn't exist")
+                            else:
+                                valid_group = True
+                        result[i].remove(to_move)
+                        result[new_group].append(to_move)
+                        break
+                if found:
+                    valid_student = True
+                    break
+            if not found:
+                print("Student could not be found")
+
+#print(result)
+#print output again
+printOutput(result)
+           
 timestamp = datetime.datetime.now().strftime("%m-%d-(%I-%M)")
 outputFile = "GroupMakerOutput"+timestamp+".csv"
 
