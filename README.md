@@ -31,7 +31,7 @@ The output CSV is stored in the same folder as the program
 
 ## Input CSV Details
 The input CSV must be in the following format. The first two columns must be labled "Name" and "Blacklist" in that order. <br/>The last three columns are custom categories and can be labled as anything the user wishes. <br/>
-If the student does not a student to blacklist or a custom category you can leave the field blank. 
+If the student does not have a student to blacklist you can leave the field blank. 
 ## Example CSV Format
 
 | Name    | Blacklist| Custom Category 1 (Favorite Console)  | Custom Category 2 (Favorite Color)|Custom Category 3 (Favorite Sport) |
